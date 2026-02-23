@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Träna: Finit verb & infinit verb</title>
+  <style>
+    :root{
+      --bg:#0b1020; --card:#141b33; --card2:#0f1630;
+      --text:#e9ecff; --muted:#b9c0ff;
+      --ok:#31d17c; --bad:#ff5c7a; --warn:#ffd166;
+      --line:rgba(255,255,255,.10);
+      --btn:#2b3a8a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(1200px 600px at 30% -10%, #26307a 0%, transparent 60%),
+                  radial-gradient(1000px 600px at 90% 10%, #2a8a7a 0%, transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    header{
+      padding:18px 16px 10px;
+      max-width:1100px; margin:0 auto;
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+    }
+    .brand{display:flex; gap:10px; align-items:center}
+    .logo{
+      width:44px; height:44px; border-radius:12px;
+      background: linear-gradient(135deg,#3b82f6,#22c55e);
+      display:grid; place-items:center; font-weight:800; color:#081028;
+      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+    }
+    h1{margin:0; font-size:18px; line-height:1.2}
+    .sub{margin:2px 0 0; color:var(--muted); font-size:13px}
+    main{max-width:1100px; margin:0 auto; padding:10px 16px 40px; display:grid; gap:14px}
+    .grid{display:grid; grid-template-columns: 1.2fr .8fr; gap:14px}
+    @media (max-width: 900px){ .grid{grid-template-columns:1fr} }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      box-shadow: 0 18px 45px rgba(0,0,0,.35);
+    }
+    .card h2{margin:0 0 8px; font-size:16px}
+    .pillrow{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+    .pill{
+      font-size:12px; padding:7px 10px; border-radius:999px;
+      border:1px solid var(--line); background:rgba(0,0,0,.15); color:var(--muted);
+    }
+    .stats{display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-top:10px}
+    .stat{
+      border:1px solid var(--line); border-radius:14px; padding:10px;
+      background:rgba(0,0,0,.12);
+    }
+    .stat b{display:block; font-size:18px}
+    .stat span{color:var(--muted); font-size:12px}
+    .modebar{display:flex; gap:8px; flex-wrap:wrap}
+    button{
+      appearance:none; border:none; cursor:pointer;
+      background:var(--btn); color:var(--text);
+      padding:10px 12px; border-radius:12px;
+      font-weight:650; font-size:14px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
+    }
+    button.secondary{background:rgba(255,255,255,.10); border:1px solid var(--line); box-shadow:none}
+    button.ghost{background:transparent; border:1px dashed var(--line); box-shadow:none}
+    button:disabled{opacity:.55; cursor:not-allowed}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .qbox{
+      margin-top:10px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background:rgba(0,0,0,.16);
+    }
+    .qtitle{font-size:13px; color:var(--muted); margin-bottom:6px}
+    .sentence{
+      font-size:18px; line-height:1.35;
+      padding:10px 10px; border-radius:12px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+    }
+    .choices{display:grid; gap:8px; margin-top:10px}
+    .choice{
+      text-align:left;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.12);
+      padding:10px 12px; border-radius:12px;
+      font-weight:650;
+    }
+    .choice:hover{filter:brightness(1.08)}
+    .choice.ok{border-color:rgba(49,209,124,.55); background:rgba(49,209,124,.12)}
+    .choice.bad{border-color:rgba(255,92,122,.55); background:rgba(255,92,122,.12)}
+    .explain{
+      margin-top:10px;
+      border-left:4px solid rgba(255,255,255,.25);
+      padding:8px 10px;
+      color:var(--muted);
+      background:rgba(0,0,0,.10);
+      border-radius:12px;
+      font-size:13px;
+    }
+    .tag{
+      display:inline-block; padding:4px 8px; border-radius:999px;
+      border:1px solid var(--line); background:rgba(0,0,0,.12);
+      font-size:12px; color:var(--muted); margin-right:6px;
+    }
+    .banner{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 12px; border-radius:14px; border:1px solid var(--line);
+      background:rgba(0,0,0,.10);
+    }
+    .banner b{font-size:14px}
+    .banner span{color:var(--muted); font-size:12px}
+    .good{color:var(--ok)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+    input[type="text"]{
+      width:100%; padding:12px; border-radius:12px;
+      border:1px solid var(--line); background:rgba(0,0,0,.18); color:var(--text);
+      font-size:16px;
+    }
+    .small{font-size:12px; color:var(--muted)}
+    details summary{cursor:pointer; color:var(--muted)}
+    details{margin-top:10px}
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:12px; padding:2px 6px; border-radius:8px;
+      background:rgba(255,255,255,.10); border:1px solid var(--line);
+      color:var(--text);
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo">FV</div>
+    <div>
+      <h1>Träna till prov: <span class="good">finit</span> & <span class="warn">infinit</span> verb</h1>
+      <div class="sub">Identifiera verbformer • hjälpverb + huvudverb • små “provliknande” uppgifter</div>
+    </div>
+  </div>
+  <div class="row">
+    <button class="secondary" id="btnReset" title="Nollställ poäng & statistik">Nollställ</button>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+    <section class="card">
+      <div class="banner">
+        <div>
+          <b id="modeName">Läge: Snabbquiz</b><br/>
+          <span id="modeHint">Välj rätt svar. Förklaring kommer efteråt.</span>
+        </div>
+        <div class="row">
+          <span class="tag" id="levelTag">Nivå 1</span>
+          <span class="tag" id="topicTag">Blandat</span>
+        </div>
+      </div>
+
+      <div class="modebar" style="margin-top:10px">
+        <button id="mQuiz">Snabbquiz</button>
+        <button class="secondary" id="mSort">Sortera ord</button>
+        <button class="secondary" id="mDict">Diktamen</button>
+      </div>
+
+      <div class="pillrow" style="margin-top:10px">
+        <span class="pill"><b>Finit</b> = presens/preteritum/imperativ</span>
+        <span class="pill"><b>Infinit</b> = infinitiv/supinum/particip</span>
+        <span class="pill">Om verbet ensam kan vara predikat → oftast <b>finit</b></span>
+      </div>
+
+      <div class="qbox" id="taskArea">
+        <!-- dynamic -->
+      </div>
+
+      <div class="row" style="margin-top:10px; justify-content:space-between">
+        <div class="small">Tips: <span class="kbd">Enter</span> = nästa när knappen syns</div>
+        <div class="row">
+          <button class="ghost" id="btnExplainToggle">Visa/ Dölj miniregel</button>
+          <button id="btnNext">Nästa</button>
+        </div>
+      </div>
+
+      <details id="miniRule" open>
+        <summary>Miniregel (som ofta räcker på prov)</summary>
+        <div class="explain">
+          <div style="margin-bottom:6px">
+            <span class="tag">Steg 1</span> Leta efter verb som är böjt i <b>presens</b> (t.ex. <i>går</i>), <b>preteritum</b> (t.ex. <i>gick</i>) eller <b>imperativ</b> (t.ex. <i>Gå!</i>) → <b class="good">finit</b>.
+          </div>
+          <div style="margin-bottom:6px">
+            <span class="tag">Steg 2</span> Ser du <b>hjälpverb</b> (ska/har/är/var/kan/kommer att…)? Då är <b>huvudverbet</b> ofta <b class="warn">infinit</b> (infinitiv/supinum/particip).
+          </div>
+          <div>
+            <span class="tag">Steg 3</span> Infinitformer: <b>infinitiv</b> (att baka), <b>supinum</b> (har bakat),
+            <b>perfekt particip</b> (är bakad), <b>presens particip</b> (bakande).
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <aside class="card">
+      <h2>Poäng & nivå</h2>
+      <div class="stats">
+        <div class="stat"><b id="sScore">0</b><span>Poäng</span></div>
+        <div class="stat"><b id="sStreak">0</b><span>Streak</span></div>
+        <div class="stat"><b id="sAcc">0%</b><span>Träffsäkerhet</span></div>
+      </div>
+
+      <div style="height:10px"></div>
+      <div class="banner">
+        <div>
+          <b>”Provkänsla”</b><br/>
+          <span>Vanliga provtyper: markera finit/infinit, hitta hjälpverb, välja rätt verbform.</span>
+        </div>
+      </div>
+
+      <details>
+        <summary>Vad kan komma på prov? (typiska uppgifter)</summary>
+        <div class="explain">
+          <ul style="margin:8px 0 0 18px; padding:0">
+            <li>Markera vilka verb som är <b>finita</b> i en text.</li>
+            <li>Markera vilka verb som är <b>infinita</b> (infinitiv/supinum/particip).</li>
+            <li>Hitta <b>hjälpverb</b> och <b>huvudverb</b> (t.ex. <i>ska + skriva</i>).</li>
+            <li>Välj rätt form: <i>Jag ___ (att springa)</i> → <i>springer/sprang/har sprungit</i>.</li>
+            <li>Förklara kort varför ett verb är finit/infinit.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Inställningar</summary>
+        <div class="explain">
+          <div class="row" style="margin-bottom:8px">
+            <button class="secondary" id="btnLevelDown">− Nivå</button>
+            <button class="secondary" id="btnLevelUp">+ Nivå</button>
+          </div>
+          <div class="small">Nivå 1 = lätt igenkänning • Nivå 2–3 = mer blandat • Nivå 4 = lite klurigare meningar.</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Om diktamen</summary>
+        <div class="explain">
+          Diktamen använder webbläsarens taligenkänning (Web Speech API).
+          Det fungerar ofta i Chrome/Edge. Om det inte funkar: använd “Sortera ord” eller “Snabbquiz”.
+        </div>
+      </details>
+    </aside>
+  </div>
+</main>
+
+<script>
+(function(){
+  // ---------- Utilities ----------
+  const $ = (id)=>document.getElementById(id);
+  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+  const shuffle=(arr)=>arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+
+  // ---------- Persistent state ----------
+  const KEY="finit_infinit_trainer_v1";
+  const defaultState = { score:0, streak:0, correct:0, total:0, level:1, mode:"quiz" };
+  const state = Object.assign({}, defaultState, safeLoad());
+
+  function safeLoad(){
+    try{ return JSON.parse(localStorage.getItem(KEY)||"{}"); }catch(e){ return {}; }
+  }
+  function save(){
+    localStorage.setItem(KEY, JSON.stringify(state));
+    renderStats();
+  }
+
+  // ---------- Question bank ----------
+  // Types:
+  // quiz: multiple choice
+  // sort: user sorts items into two buckets
+  // dict: user speaks, then classifies verbforms found in text
+  const bank = [
+    // LÄTT: finita former
+    qQuiz(1, "Är det finita verbet i presens eller preteritum?", "Babyn går.", [
+      ["Presens (finit)", true, "‘går’ är presens → finit."],
+      ["Preteritum (finit)", false, "Preteritum skulle vara t.ex. ‘gick’."],
+      ["Infinitiv (infinit)", false, "Infinitiv är ‘att gå’."]
+    ], {topic:"Finit"}),
+    qQuiz(1, "Vilket ord är det finita verbet?", "Pojken gick hem.", [
+      ["pojken", false, "Substantiv/nominalt."],
+      ["gick", true, "‘gick’ är preteritum → finit."],
+      ["hem", false, "Adverb."]
+    ], {topic:"Finit"}),
+    qQuiz(1, "Vilken form är ‘Gå!’?", "Gå din väg!", [
+      ["Imperativ (finit)", true, "Imperativ räknas som finit."],
+      ["Infinitiv (infinit)", false, "Infinitiv är ‘att gå’."],
+      ["Supinum (infinit)", false, "Supinum: ‘har gått’."]
+    ], {topic:"Finit"}),
+
+    // LÄTT/MELLAN: infinita former
+    qQuiz(1, "Vilken form är ‘att baka’?", "Jag ska baka kakan.", [
+      ["Infinitiv (infinit)", true, "Efter hjälpverb (‘ska’) står ofta infinitiv."],
+      ["Presens (finit)", false, "Presens vore ‘bakar’."],
+      ["Supinum (infinit)", false, "Supinum vore ‘bakat’ i ‘har bakat’."]
+    ], {topic:"Infinit"}),
+    qQuiz(2, "Vilken form är ‘bakat’ i meningen?", "Vi har bakat hela dagen.", [
+      ["Supinum (infinit)", true, "‘har’ + supinum (‘bakat’) → perfekt."],
+      ["Perfekt particip (infinit)", false, "Perfekt particip: ‘är bakad’."],
+      ["Preteritum (finit)", false, "Preteritum vore ‘bakade’."]
+    ], {topic:"Infinit"}),
+    qQuiz(2, "Vilken form är ‘bakad’ i meningen?", "Kakan är bakad.", [
+      ["Perfekt particip (infinit)", true, "‘är’ + perfekt particip (‘bakad’)."],
+      ["Supinum (infinit)", false, "Supinum: ‘har bakat’."],
+      ["Presens (finit)", false, "Presens vore ‘bakar’."]
+    ], {topic:"Infinit"}),
+    qQuiz(2, "Vilken form är ‘bakande’?", "Hon gick runt bakande bullar.", [
+      ["Presens particip (infinit)", true, "Presens particip slutar ofta på -ande/-ende."],
+      ["Imperativ (finit)", false, "Imperativ: ‘baka!’"],
+      ["Preteritum (finit)", false, "Preteritum: ‘bakade’."]
+    ], {topic:"Infinit"}),
+
+    // MELLAN: hjälpverb + huvudverb
+    qQuiz(2, "Vilket är hjälpverbet?", "Han ska skriva ett brev.", [
+      ["ska", true, "‘ska’ är hjälpverb; huvudverbet ‘skriva’ står i infinitiv."],
+      ["skriva", false, "‘skriva’ är huvudverb i infinitiv (infinit form)."],
+      ["brev", false, "Substantiv."]
+    ], {topic:"Hjälpverb"}),
+    qQuiz(3, "Vilket är huvudverbet (infinit form)?", "Hon vill läsa nu.", [
+      ["vill", false, "‘vill’ fungerar som hjälpverb/modalverb här."],
+      ["läsa", true, "Efter ‘vill’ kommer infinitiv: ‘läsa’."],
+      ["nu", false, "Adverb."]
+    ], {topic:"Hjälpverb"}),
+
+    // SVÅRARE: flera verb i samma mening
+    qQuiz(3, "Vilka verbformer finns här?", "Jag har sprungit och duschat.", [
+      ["‘har’ finit + ‘sprungit/duschat’ supinum (infinit)", true, "‘har’ är finit hjälpverb; supinum bygger perfekt."],
+      ["Alla verb är finita", false, "‘sprungit’ och ‘duschat’ är supinum → infinit."],
+      ["‘sprungit’ är preteritum", false, "Preteritum vore ‘sprang’."]
+    ], {topic:"Blandat"}),
+    qQuiz(4, "Vad är det finita verbet i meningen?", "De hade redan ätit när jag kom.", [
+      ["hade", true, "‘hade’ är finit (preteritum av ‘ha’)."],
+      ["ätit", false, "‘ätit’ är supinum (infinit form)."],
+      ["kom", false, "‘kom’ är också finit – men frågan syftar ofta på hjälpverbet i pluskvamperfekt."]
+    ], {topic:"Blandat"}),
+
+    // SORTERA (bucket)
+    qSort(1, "Sortera verbformer", ["går","gick","Gå!","att gå","gått","gående","har","är"], {
+      finit:["går","gick","Gå!","har","är"],
+      infinit:["att gå","gått","gående"]
+    }, "Tänk: böjt i presens/preteritum/imperativ → finit. Infinitiv/supinum/particip → infinit.", {topic:"Sortera"}),
+
+    qSort(3, "Sortera: markera finit vs infinit i meningar (verborden)", ["ska","skriva","har","bakat","är","bakad","kan","springa"], {
+      finit:["ska","har","är","kan"],
+      infinit:["skriva","bakat","bakad","springa"]
+    }, "Hjälpverb (ska/har/är/kan) är ofta finit. Huvudverbet efteråt är ofta infinit.", {topic:"Sortera"}),
+
+    // DIKTAMEN (fråga användaren att säga en mening)
+    qDict(2, "Säg meningen högt", "Säg: “Jag ska baka kakan.”", {
+      mustContain:["ska","baka"],
+      askClassify:[
+        {word:"ska", answer:"finit", why:"‘ska’ är hjälpverb i presens → finit."},
+        {word:"baka", answer:"infinit", why:"Efter ‘ska’ står infinitiv: ‘baka’."}
+      ]
+    }, {topic:"Diktamen"}),
+
+    qDict(3, "Säg meningen högt", "Säg: “Vi har bakat hela dagen.”", {
+      mustContain:["har","bakat"],
+      askClassify:[
+        {word:"har", answer:"finit", why:"‘har’ är böjt (presens) → finit."},
+        {word:"bakat", answer:"infinit", why:"‘bakat’ är supinum i perfekt: ‘har bakat’."}
+      ]
+    }, {topic:"Diktamen"})
+  ];
+
+  function qQuiz(level, prompt, sentence, options, meta={}){
+    return {type:"quiz", level, prompt, sentence, options, meta};
+  }
+  function qSort(level, prompt, items, buckets, help, meta={}){
+    return {type:"sort", level, prompt, items, buckets, help, meta};
+  }
+  function qDict(level, prompt, instruction, payload, meta={}){
+    return {type:"dict", level, prompt, instruction, payload, meta};
+  }
+
+  // ---------- Mode handling ----------
+  const modes = {
+    quiz:{ name:"Snabbquiz", hint:"Välj rätt svar. Förklaring kommer efteråt." },
+    sort:{ name:"Sortera ord", hint:"Dra/klicka ord till ‘Finit’ eller ‘Infinit’." },
+    dict:{ name:"Diktamen", hint:"Tryck Starta och säg meningen. Sedan klassar du verbformer." }
+  };
+
+  let current = null;
+  let locked = false;
+
+  function setMode(mode){
+    state.mode = mode;
+    $("mQuiz").className = mode==="quiz" ? "" : "secondary";
+    $("mSort").className = mode==="sort" ? "" : "secondary";
+    $("mDict").className = mode==="dict" ? "" : "secondary";
+    $("modeName").textContent = `Läge: ${modes[mode].name}`;
+    $("modeHint").textContent = modes[mode].hint;
+    nextTask(true);
+    save();
+  }
+
+  function levelText(n){ return `Nivå ${n}`; }
+
+  function renderMeta(){
+    $("levelTag").textContent = levelText(state.level);
+    $("topicTag").textContent = current?.meta?.topic ? current.meta.topic : "Blandat";
+  }
+
+  function pickTask(){
+    const pool = bank.filter(q => q.level <= state.level && q.type===state.mode);
+    const fallback = bank.filter(q => q.level <= state.level);
+    const use = pool.length ? pool : fallback.filter(q=>q.type===state.mode);
+    return (use.length? use : bank).slice();
+  }
+
+  function nextTask(force=false){
+    locked = false;
+    $("btnNext").disabled = false;
+
+    const list = pickTask();
+    current = list[Math.floor(Math.random()*list.length)];
+
+    // If mode has no items at this level, gently fall back
+    if(current.type !== state.mode){
+      // find one matching type
+      const pool = bank.filter(q=>q.type===state.mode);
+      if(pool.length) current = pool[Math.floor(Math.random()*pool.length)];
+    }
+
+    renderMeta();
+    renderTask();
+  }
+
+  // ---------- Scoring ----------
+  function mark(correct){
+    state.total += 1;
+    if(correct){
+      state.correct += 1;
+      state.streak += 1;
+      state.score += 10 + Math.min(10, state.streak); // streak bonus
+    }else{
+      state.streak = 0;
+      state.score = Math.max(0, state.score - 3);
+    }
+    // level up logic (simple)
+    const acc = state.total ? (state.correct/state.total) : 0;
+    if(state.total >= 10 && acc > 0.78 && state.level < 4){
+      state.level += 1;
+    }
+    save();
+    $("levelTag").textContent = levelText(state.level);
+  }
+
+  function renderStats(){
+    $("sScore").textContent = state.score;
+    $("sStreak").textContent = state.streak;
+    const acc = state.total ? Math.round(100 * state.correct / state.total) : 0;
+    $("sAcc").textContent = acc + "%";
+  }
+  renderStats();
+
+  // ---------- Render tasks ----------
+  function renderTask(){
+    const area = $("taskArea");
+    area.innerHTML = "";
+    if(current.type==="quiz") renderQuiz(area);
+    if(current.type==="sort") renderSort(area);
+    if(current.type==="dict") renderDict(area);
+  }
+
+  function renderQuiz(area){
+    const el = document.createElement("div");
+    el.innerHTML = `
+      <div class="qtitle">${escapeHtml(current.prompt)}</div>
+      <div class="sentence">${escapeHtml(current.sentence)}</div>
+      <div class="choices" id="choices"></div>
+      <div id="explain" class="explain" style="display:none"></div>
+    `;
+    area.appendChild(el);
+
+    const choices = $("choices");
+    const opts = shuffle(current.options.slice());
+    opts.forEach((opt, idx)=>{
+      const [label, isCorrect, explanation] = opt;
+      const b = document.createElement("button");
+      b.className = "choice";
+      b.type = "button";
+      b.textContent = label;
+      b.addEventListener("click", ()=>{
+        if(locked) return;
+        locked = true;
+        // paint
+        [...choices.children].forEach(btn=>btn.disabled=true);
+        if(isCorrect){
+          b.classList.add("ok");
+          mark(true);
+        }else{
+          b.classList.add("bad");
+          // show correct
+          const correctBtn = [...choices.children].find((btn,i)=> opts[i][1]===true);
+          if(correctBtn) correctBtn.classList.add("ok");
+          mark(false);
+        }
+        const exp = $("explain");
+        exp.style.display = "block";
+        exp.innerHTML = `<span class="tag">${isCorrect ? "Rätt" : "Fel"}</span> ${escapeHtml(explanation)}`;
+      });
+      choices.appendChild(b);
+    });
+  }
+
+  function renderSort(area){
+    const el = document.createElement("div");
+    el.innerHTML = `
+      <div class="qtitle">${escapeHtml(current.prompt)}</div>
+      <div class="explain">${escapeHtml(current.help)}</div>
+
+      <div class="row" style="margin-top:10px">
+        <div class="card" style="flex:1; background:rgba(0,0,0,.10)">
+          <h2 style="margin:0 0 8px">Ord</h2>
+          <div class="pillrow" id="wordPile"></div>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <div class="card" style="flex:1; background:rgba(0,0,0,.10)">
+          <h2 style="margin:0 0 8px"><span class="good">Finit</span></h2>
+          <div class="pillrow" id="bucketF"></div>
+        </div>
+        <div class="card" style="flex:1; background:rgba(0,0,0,.10)">
+          <h2 style="margin:0 0 8px"><span class="warn">Infinit</span></h2>
+          <div class="pillrow" id="bucketI"></div>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px; justify-content:space-between">
+        <button class="secondary" id="btnUndo">Ångra</button>
+        <button id="btnCheck">Rätta</button>
+      </div>
+      <div id="sortFeedback" class="explain" style="display:none"></div>
+    `;
+    area.appendChild(el);
+
+    const pile = $("wordPile");
+    const bf = $("bucketF");
+    const bi = $("bucketI");
+    const history = [];
+
+    const items = shuffle(current.items.slice());
+    items.forEach(w=>{
+      pile.appendChild(makeChip(w, ()=>moveChip(w)));
+    });
+
+    function makeChip(text, onClick){
+      const s = document.createElement("button");
+      s.className = "pill";
+      s.style.cursor = "pointer";
+      s.textContent = text;
+      s.addEventListener("click", onClick);
+      return s;
+    }
+
+    function moveChip(word){
+      if(locked) return;
+      // ask where to put: small prompt buttons
+      const pick = document.createElement("div");
+      pick.className="banner";
+      pick.style.marginTop="10px";
+      pick.innerHTML = `
+        <div><b>Var ska <span class="kbd">${escapeHtml(word)}</span>?</b><br/><span>Välj hink:</span></div>
+        <div class="row">
+          <button id="toF">Finit</button>
+          <button class="secondary" id="toI">Infinit</button>
+          <button class="ghost" id="cancel">Avbryt</button>
+        </div>
+      `;
+      $("taskArea").appendChild(pick);
+
+      $("toF").onclick=()=>place(word,"f",pick);
+      $("toI").onclick=()=>place(word,"i",pick);
+      $("cancel").onclick=()=>pick.remove();
+    }
+
+    function place(word, bucket, pickEl){
+      pickEl.remove();
+      // remove from pile
+      const chip = [...pile.children].find(c=>c.textContent===word);
+      if(!chip) return;
+      chip.remove();
+      const target = bucket==="f" ? bf : bi;
+      const newChip = makeChip(word, ()=>{}); // no move after placed
+      target.appendChild(newChip);
+      history.push({word, bucket, chipText:word});
+    }
+
+    $("btnUndo").onclick=()=>{
+      if(locked) return;
+      const last = history.pop();
+      if(!last) return;
+      const bucket = last.bucket==="f" ? bf : bi;
+      const chip = [...bucket.children].find(c=>c.textContent===last.word);
+      if(chip) chip.remove();
+      pile.appendChild(makeChip(last.word, ()=>moveChip(last.word)));
+    };
+
+    $("btnCheck").onclick=()=>{
+      if(locked) return;
+      locked = true;
+
+      const chosenF = [...bf.children].map(x=>x.textContent);
+      const chosenI = [...bi.children].map(x=>x.textContent);
+
+      const wantF = current.buckets.finit.slice();
+      const wantI = current.buckets.infinit.slice();
+
+      const okF = chosenF.every(w=>wantF.includes(w)) && wantF.every(w=>chosenF.includes(w));
+      const okI = chosenI.every(w=>wantI.includes(w)) && wantI.every(w=>chosenI.includes(w));
+      const allPlaced = (pile.children.length===0);
+
+      const correct = okF && okI && allPlaced;
+
+      // paint chips
+      [...bf.children].forEach(ch=>{
+        ch.classList.add(wantF.includes(ch.textContent) ? "ok" : "bad");
+      });
+      [...bi.children].forEach(ch=>{
+        ch.classList.add(wantI.includes(ch.textContent) ? "ok" : "bad");
+      });
+
+      const fb = $("sortFeedback");
+      fb.style.display="block";
+      if(!allPlaced){
+        fb.innerHTML = `<span class="tag">Inte klart</span> Flytta alla ord från “Ord” först.`;
+        locked = false; // allow continue fixing
+        return;
+      }
+
+      if(correct){
+        fb.innerHTML = `<span class="tag">Rätt</span> Snyggt! Alla ord ligger i rätt hink.`;
+        mark(true);
+      }else{
+        fb.innerHTML = `<span class="tag">Fel</span> Kolla igen. Rätt svar: <br/>
+        <b class="good">Finit:</b> ${wantF.map(w=>`<span class="kbd">${escapeHtml(w)}</span>`).join(" ")}<br/>
+        <b class="warn">Infinit:</b> ${wantI.map(w=>`<span class="kbd">${escapeHtml(w)}</span>`).join(" ")}
+        `;
+        mark(false);
+      }
+    };
+  }
+
+  // ---------- Dictation ----------
+  let recognition = null;
+  let listening = false;
+
+  function renderDict(area){
+    const el = document.createElement("div");
+    el.innerHTML = `
+      <div class="qtitle">${escapeHtml(current.prompt)}</div>
+      <div class="sentence">${escapeHtml(current.instruction)}</div>
+
+      <div class="row" style="margin-top:10px">
+        <button id="btnStartRec">Starta</button>
+        <button class="secondary" id="btnStopRec" disabled>Stoppa</button>
+        <button class="ghost" id="btnUseText">Jag vill skriva istället</button>
+      </div>
+
+      <div style="margin-top:10px">
+        <div class="small">Uppfattad text:</div>
+        <div class="qbox" id="heardBox" style="min-height:52px"></div>
+      </div>
+
+      <div id="dictActions" style="display:none; margin-top:10px">
+        <div class="qtitle">Nu: klassificera orden</div>
+        <div class="choices" id="dictChoices"></div>
+        <div id="dictFeedback" class="explain" style="display:none"></div>
+      </div>
+    `;
+    area.appendChild(el);
+
+    const heardBox = $("heardBox");
+    const actions = $("dictActions");
+    const dc = $("dictChoices");
+    const fb = $("dictFeedback");
+
+    // fallback input
+    $("btnUseText").onclick=()=>{
+      if(listening) stopRec();
+      const txt = prompt("Skriv meningen här (ungefär):");
+      if(txt){
+        heardBox.textContent = txt;
+        afterHeard(txt);
+      }
+    };
+
+    $("btnStartRec").onclick=()=>startRec();
+    $("btnStopRec").onclick=()=>stopRec();
+
+    function setupRecognition(){
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SR) return null;
+      const r = new SR();
+      r.lang = "sv-SE";
+      r.interimResults = true;
+      r.continuous = false;
+      return r;
+    }
+
+    function startRec(){
+      if(locked) return;
+      recognition = setupRecognition();
+      if(!recognition){
+        heardBox.innerHTML = `<span class="bad">Taligenkänning stöds inte här.</span> Tryck “Jag vill skriva istället”.`;
+        return;
+      }
+      listening = true;
+      $("btnStartRec").disabled = true;
+      $("btnStopRec").disabled = false;
+      heardBox.textContent = "Lyssnar…";
+
+      let finalText = "";
+
+      recognition.onresult = (e)=>{
+        let text = "";
+        for(let i=0;i<e.results.length;i++){
+          text += e.results[i][0].transcript;
+          if(e.results[i].isFinal) finalText = text;
+        }
+        heardBox.textContent = text.trim();
+      };
+      recognition.onerror = ()=>{
+        heardBox.innerHTML = `<span class="bad">Kunde inte lyssna just nu.</span> Prova igen eller skriv istället.`;
+        stopRec(true);
+      };
+      recognition.onend = ()=>{
+        stopRec(true);
+        const t = (finalText || heardBox.textContent || "").trim();
+        if(t && t !== "Lyssnar…") afterHeard(t);
+      };
+
+      recognition.start();
+    }
+
+    function stopRec(silent=false){
+      if(!recognition) return;
+      try{ recognition.stop(); }catch(e){}
+      listening = false;
+      $("btnStartRec").disabled = false;
+      $("btnStopRec").disabled = true;
+      if(!silent) heardBox.textContent = (heardBox.textContent || "").replace("Lyssnar…","").trim();
+    }
+
+    function afterHeard(text){
+      actions.style.display = "block";
+      dc.innerHTML = "";
+      fb.style.display = "none";
+      locked = false;
+
+      // quick check: mustContain
+      const low = text.toLowerCase();
+      const missing = (current.payload.mustContain || []).filter(w=>!low.includes(w));
+      if(missing.length){
+        fb.style.display = "block";
+        fb.innerHTML = `<span class="tag">Obs</span> Jag hörde inte riktigt alla nyckelord: ${missing.map(x=>`<span class="kbd">${escapeHtml(x)}</span>`).join(" ")}.
+        Det går ändå att träna klassificeringen.`;
+      }
+
+      // Build classification prompts
+      const items = current.payload.askClassify.slice();
+      items.forEach((it, idx)=>{
+        const wrap = document.createElement("div");
+        wrap.className = "qbox";
+        wrap.innerHTML = `
+          <div class="qtitle">Är <span class="kbd">${escapeHtml(it.word)}</span> finit eller infinit?</div>
+          <div class="row">
+            <button class="choice" data-a="finit">Finit</button>
+            <button class="choice secondary" data-a="infinit">Infinit</button>
+          </div>
+          <div class="explain" style="display:none"></div>
+        `;
+        const buttons = wrap.querySelectorAll("button");
+        const exp = wrap.querySelector(".explain");
+        buttons.forEach(btn=>{
+          btn.addEventListener("click", ()=>{
+            if(btn.disabled) return;
+            // disable both
+            buttons.forEach(b=>b.disabled=true);
+            const a = btn.getAttribute("data-a");
+            const ok = (a === it.answer);
+            btn.classList.add(ok ? "ok" : "bad");
+            exp.style.display = "block";
+            exp.innerHTML = `<span class="tag">${ok ? "Rätt" : "Fel"}</span> ${escapeHtml(it.why)}`;
+            // if all answered, score once
+            if([...dc.querySelectorAll("button")].every(b=>b.disabled)){
+              const allOk = [...dc.querySelectorAll(".qbox")].every(box=>{
+                const chosen = box.querySelector("button.ok");
+                // ok present means correct chosen
+                return !!chosen;
+              });
+              mark(allOk);
+              const fin = allOk ? "Snyggt! ✅" : "Bra träning — kolla förklaringarna ovan.";
+              fb.style.display = "block";
+              fb.innerHTML = `<span class="tag">Klart</span> ${fin}`;
+            }
+          });
+        });
+        dc.appendChild(wrap);
+      });
+    }
+  }
+
+  // ---------- UI controls ----------
+  $("btnNext").addEventListener("click", ()=>nextTask());
+  document.addEventListener("keydown", (e)=>{
+    if(e.key==="Enter" && !$("btnNext").disabled) $("btnNext").click();
+  });
+
+  $("btnExplainToggle").onclick=()=>{
+    const d = $("miniRule");
+    d.open = !d.open;
+  };
+
+  $("mQuiz").onclick=()=>setMode("quiz");
+  $("mSort").onclick=()=>setMode("sort");
+  $("mDict").onclick=()=>setMode("dict");
+
+  $("btnLevelUp").onclick=()=>{ state.level = clamp(state.level+1,1,4); save(); nextTask(true); };
+  $("btnLevelDown").onclick=()=>{ state.level = clamp(state.level-1,1,4); save(); nextTask(true); };
+
+  $("btnReset").onclick=()=>{
+    if(confirm("Nollställa poäng, streak och statistik?")){
+      Object.assign(state, defaultState, {level: state.level, mode: state.mode});
+      save();
+      nextTask(true);
+    }
+  };
+
+  // ---------- Helpers ----------
+  function escapeHtml(s){
+    return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  }
+
+  // Start
+  setMode(state.mode || "quiz");
+})();
+</script>
+</body>
+</html>
